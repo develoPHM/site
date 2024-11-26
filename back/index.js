@@ -4,6 +4,7 @@ const mysql = require('mysql2');
 const app = express();
 const port = 3000; // API 서버 포트
 app.use(cors());
+app.use(express.json()); // JSON 파싱 미들웨어 추가
 // mysql 연결 설정
 const db = mysql.createConnection({
     host: '127.0.0.1', // MySQL 서버 주소
@@ -22,7 +23,7 @@ db.connect((err) => {
 })
 
 // 테이블 데이터 조회하는 api
-app.get('/api', (req, res) => {
+app.get('/api/find', (req, res) => {
     const sql = 'SELECT * FROM HM.people';
     db.query(sql, (err, result) => {
         if (err) {
@@ -34,6 +35,23 @@ app.get('/api', (req, res) => {
         console.log("콘솔:",result)
     })
 })
+// 데이터 저장
+app.post('/api/save', (req, res) => {
+    const { name, number } = req.body;
+
+    if ( !name || !number) {
+        return res.status(400).send({ message: '모든 필드를 입력해주세요.' });
+    }
+
+    const sql = 'INSERT INTO HM.people (name, number) VALUES (?, ?)';
+    db.query(sql, [name, number], (err, results) => {
+        if (err) {
+            console.error('데이터 저장 실패:', err);
+            return res.status(500).send({ message: '데이터 저장 중 오류가 발생했습니다.' });
+        }
+        res.send({ message: '데이터가 성공적으로 저장되었습니다.', results });
+    });
+});
 // 기본 루트
 app.get('/',(req, res)=>{
     res.send("이곳은 백이다");
