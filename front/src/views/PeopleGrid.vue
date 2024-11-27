@@ -3,66 +3,84 @@
 		<h1>사람 테이블</h1>
 		<div>
 			<button @click="saveData">저장</button>
-			<input v-model="dbname" placeholder="이름" />
-			<input v-model="dbnumber" placeholder="번호" />
+			<input v-model="inputName" placeholder="이름" />
+			<input v-model="inputNumber" placeholder="번호" />
 		</div>
 		<br />
-		{{ computedPeople }}<br />
-		<DataGrid :data="computedPeople" style="width: 500px">
-			<GridColumn field="id" title="아이디" width="10%"></GridColumn>
-			<GridColumn field="name" title="이름" width="30%"></GridColumn>
+		<DataGrid :data="People" style="width: 500px">
+			<GridColumn field="id" width="4em" title="고유값"></GridColumn>
+			<GridColumn field="name" title="이름"></GridColumn>
 			<GridColumn field="number" title="번호"></GridColumn>
+			<GridColumn title="삭제" width="4em">
+				<template #cell="props">
+					<button @click="deleteData(props.row.id)">삭제</button>
+				</template>
+			</GridColumn>
 		</DataGrid>
 	</div>
 </template>
 
 <script>
-import axios from 'axios';
-import { computed } from 'vue';
-import { ref, onMounted } from 'vue';
+import { computed, ref, onMounted } from 'vue';
 import { useStore } from 'vuex';
 
 export default {
 	setup() {
 		const store = useStore();
-		const dbname = ref('');
-		const dbnumber = ref('');
-		// 저장 버튼
+		const inputName = ref('');
+		const inputNumber = ref('');
+
+		// 데이터 저장
 		const saveData = async () => {
-			try {
-				const response = await axios.post('http://localhost:3000/api/save', {
-					name: dbname.value,
-					number: dbnumber.value,
+			if (
+				typeof inputNumber.value !== 'number' &&
+				typeof inputName.value !== 'string'
+			) {
+				alert('이름은 문자, 번호는 숫자만 입력해라');
+				clearInput();
+			} else {
+				await store.dispatch('SAVE_PEOPLE', {
+					name: inputName.value,
+					number: inputNumber.value,
 				});
-				console.log(response);
-				alert(response.data.message);
-				dbname.value = '';
-				dbnumber.value = '';
-				// 데이터 저장 후 바로 최신 데이터를 가져옵니다.
-				fetchData();
-			} catch (error) {
-				console.log(error);
+				clearInput();
+			}
+		};
+		// 삭제 함수
+		const deleteData = async (data) => {
+			if (confirm('정말 삭제하겠습니까?')) {
+				try {
+					await store.dispatch('DELETE_PEOPLE', data);
+				} catch (err) {
+					console.log(err);
+				}
 			}
 		};
 		// api 호출
 		const fetchData = () => {
 			store.dispatch('FETCH_PEOPLE');
 		};
-		const computedPeople = computed(() => {
+		const People = computed(() => {
 			return store.state.people;
 		});
 
-		// 컴포넌트가 마운트될 때 자동으로 데이터를 가져옵니다.
+		// input 초기화
+		const clearInput = () => {
+			inputName.value = '';
+			inputNumber.value = '';
+		};
+		// 컴포넌트가 마운트될 때 자동으로 데이터를 가져옴.
 		onMounted(() => {
 			fetchData();
 		});
-
 		return {
-			dbname,
-			dbnumber,
+			inputName,
+			inputNumber,
 			fetchData,
-			computedPeople,
+			People,
 			saveData,
+			deleteData,
+			clearInput,
 		};
 	},
 };
