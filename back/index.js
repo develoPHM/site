@@ -21,6 +21,22 @@ db.connect((err) => {
     }
     console.log('MySQL 연결 성공적!')
 })
+// 회원가입 api
+app.post('/api/signup', (req, res) => {
+    const { id, pw, name, date } = req.body;
+
+    // 쿼리 생성
+    const query = 'INSERT INTO users (id, pw, name, date) VALUES (?, ?, ?, ?)';
+
+    // 데이터베이스에 데이터 삽입
+    db.execute(query, [id, pw, name, date], (err, result) => {
+        if (err) {
+            console.error('회원가입 오류:', err);
+            return res.status(500).json({ error: '회원가입 중 오류가 발생했습니다.' });
+        }
+        res.status(201).json({ message: '회원가입 성공', userId: id });
+    });
+});
 
 // 테이블 데이터 조회하는 api
 app.get('/api/find', (req, res) => {

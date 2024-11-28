@@ -1,13 +1,14 @@
 import { createRouter, createWebHistory } from 'vue-router';
 import PeopleGrid from '@/views/PeopleGrid.vue';
-import PageOne from '@/views/PageOne.vue';
+import LoginPage from '@/views/SignIn.vue';
+import SignUp from '@/views/SignUp.vue';
 
 // 라우트 정의
 const routes = [
 	{
 		path: '/',
-		name: 'Home',
-		redirect: '/people',
+		name: 'login',
+		component: LoginPage,
 	},
 	{
 		path: '/people',
@@ -15,9 +16,9 @@ const routes = [
 		component: PeopleGrid,
 	},
 	{
-		path: '/1',
-		name: 'Home',
-		component: PageOne,
+		path: '/signup',
+		name: 'sighup',
+		component: SignUp,
 	},
 ];
 
