@@ -37,6 +37,33 @@ app.post('/api/signup', (req, res) => {
         res.status(201).json({ message: '회원가입 성공', userId: id });
     });
 });
+// 로그인 api
+app.post('/api/signin', (req, res) => {
+    const { id, pw } = req.body;
+    const query = 'SELECT * FROM HM.users WHERE id = ? AND pw = ?';
+    db.query(query, [id, pw], (err, result) => {
+        if (err) {
+            console.log('여기서에러?')
+            return res.status(500).json({ message: '아이디나 비밀번호가 잘못됨' });
+        }
+        console.log(result);
+        if (result.length > 0) {
+            const user = result[0];
+            res.status(200).json({
+                message: '로그인 성공',
+                user: {
+                    id: user.id,
+                    name: user.name,
+                },
+            })
+        }
+        else {
+            res.status(401).json({
+                message: '아이디나 비밀번호가 틀림'
+            })
+        }
+    })
+})
 
 // 테이블 데이터 조회하는 api
 app.get('/api/find', (req, res) => {

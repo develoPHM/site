@@ -30,18 +30,14 @@ export default {
 		const password = ref('');
 		const submitForm = async () => {
 			try {
-				const signup = await axios
-					.post('http://localhost:3000/api/signup', {
-						id: username.value,
-						pw: password.value,
-						name: username.value,
-						date: new Date().toISOString().split('T')[0],
-					})
-					.then((res) => {
-						console.log(signup);
-						alert(res.data.message);
-						router.push('/');
-					});
+				await axios.post('http://localhost:3000/api/signup', {
+					id: userid.value,
+					pw: password.value,
+					name: username.value,
+					date: new Date().toISOString().split('T')[0],
+				});
+				alert('회원가입 완료~');
+				router.push('/');
 			} catch (err) {
 				console.error(err);
 				alert('오류발생');

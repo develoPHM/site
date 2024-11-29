@@ -3,8 +3,8 @@
 		<h1>로그인 하자</h1>
 		<form @submit.prevent="submitForm">
 			<div>
-				<label for="username">아이디:</label>
-				<input type="text" id="username" v-model="username" />
+				<label for="userid">아이디:</label>
+				<input type="text" id="userid" v-model="userid" />
 			</div>
 			<div>
 				<label for="password">비밀번호:</label>
@@ -13,26 +13,42 @@
 			<button type="submit">로그인</button>
 		</form>
 		<br />
-		<button @click="signUp">회원가입</button>
+		<button @click="signUpPage">회원가입</button>
 	</div>
 </template>
 
 <script>
 import { useRouter } from 'vue-router';
 import { ref } from 'vue';
+import axios from 'axios';
 
 export default {
 	setup() {
 		const router = useRouter();
-		const username = ref('');
+		const userid = ref('');
 		const password = ref('');
-		const signUp = () => {
+		const signUpPage = () => {
 			router.push('/signup');
 		};
+		const submitForm = async () => {
+			try {
+				const response = await axios.post('http://localhost:3000/api/signin', {
+					id: userid.value,
+					pw: password.value,
+				});
+				console.log(response);
+				alert('로그인 성공');
+				router.push('/people');
+			} catch (err) {
+				console.log(err);
+			}
+		};
+
 		return {
-			username,
+			userid,
 			password,
-			signUp,
+			signUpPage,
+			submitForm,
 		};
 	},
 };
