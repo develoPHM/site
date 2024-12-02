@@ -38,7 +38,7 @@ export default {
 				});
 				console.log(response);
 				alert('로그인 성공');
-				router.push('/people');
+				router.push('/home');
 			} catch (err) {
 				console.log(err);
 			}

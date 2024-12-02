@@ -98,11 +98,6 @@ app.post('/api/save', (req, res) => {
 // 데이터 삭제
 app.delete('/api/delete/:id', (req, res) => {
     const { id } = req.params;
-    console.log(req.params);
-    if (!id) {
-        return res.status(400).send({ message: 'ID가 필요합니다.' });
-    }
-
     const sql = 'DELETE FROM people WHERE id = ?';
     db.query(sql, [id], (err, results) => {
         if (err) {
@@ -115,6 +110,38 @@ app.delete('/api/delete/:id', (req, res) => {
         }
 
         res.send({ message: '데이터가 성공적으로 삭제되었습니다.' });
+    });
+});
+// 데이터 수정
+app.put('/api/update', (req, res) => {
+    const { id, name, number } = req.body;
+    if (!id || !name || !number) {
+        return res.status(400).json({ message: '작성 다 해라'});
+    }
+    // 데이터 조회 및 업데이트
+    const selectQuery = 'SELECT * FROM people WHERE id = ?';
+    const updateQuery = `UPDATE people SET name = ?, number = ? WHERE id = ?`;
+
+    // 데이터 조회
+    db.query(selectQuery, [id], (err, result) => {
+        if (err) {
+            console.error('데이터 조회 오류: ', err);
+            return res.status(500).json({ message: '데이터베이스 조회 오류가 발생함.' });
+        }
+        if (result.length === 0) {
+            return res.status(404).json({ message: '해당 사용자를 찾을 수 없다.' });
+        }
+        // 데이터 업데이트
+        db.query(updateQuery, [name, number, id], (err, updateResult) => {
+            if (err) {
+                console.error('업데이트 오류: ', err);
+                return res.status(500).json({ message: '데이터 업데이트 중 오류 발생' });
+            }
+            res.json({
+                message: '사용자 정보가 성공적으로 업데이트 되었다.',
+                updateData: { id, name, number }
+            });
+        });
     });
 });
 // 기본 루트

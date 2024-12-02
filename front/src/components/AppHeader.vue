@@ -1,6 +1,8 @@
 <template>
 	<div>
-		<h1 class="header">Hello</h1>
+		<h1>Hello</h1>
+		<router-link to="/people"> 사람조회 </router-link> |
+		<router-link to="/people_update"> 사람수정 </router-link>
 	</div>
 </template>
 

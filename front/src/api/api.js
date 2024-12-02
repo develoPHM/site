@@ -17,4 +17,9 @@ const deletePeople = async (data) => {
 	return axios.delete(`http://localhost:3000/api/delete/${data}`);
 };
 
-export { fetchPeopleList, savePeople, deletePeople };
+// 사람 데이터 수정
+const updatePeople = async (data) => {
+	return axios.put(`http://localhost:3000/api/update`, data);
+};
+
+export { fetchPeopleList, savePeople, deletePeople, updatePeople };

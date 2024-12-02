@@ -1,15 +1,17 @@
 <template>
 	<div>
-		<AppHeader></AppHeader>
-		<router-view></router-view>
+		<people-grid></people-grid>
 	</div>
 </template>
 
 <script>
-import AppHeader from '@/components/AppHeader.vue';
+import PeopleGrid from '@/components/PeopleGrid';
 export default {
 	components: {
-		AppHeader,
+		PeopleGrid,
+	},
+	setup() {
+		return;
 	},
 };
 </script>

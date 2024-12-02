@@ -1,4 +1,9 @@
-import { fetchPeopleList, savePeople, deletePeople } from '@/api/api';
+import {
+	fetchPeopleList,
+	savePeople,
+	deletePeople,
+	updatePeople,
+} from '@/api/api';
 
 export default {
 	// 목록 조회
@@ -29,6 +34,17 @@ export default {
 		deletePeople(payload)
 			.then((res) => {
 				alert(res.data.message);
+				dispatch('FETCH_PEOPLE');
+			})
+			.catch((err) => {
+				console.log(err);
+			});
+	},
+	// 사람 정보 수정
+	UPDATE_PEOPLE({ dispatch }, payload) {
+		updatePeople(payload)
+			.then((res) => {
+				console.log(res.data.message);
 				dispatch('FETCH_PEOPLE');
 			})
 			.catch((err) => {
