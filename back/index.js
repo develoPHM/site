@@ -2,6 +2,7 @@ const express = require('express');
 const cors = require('cors');
 const mysql = require('mysql2');
 const app = express();
+const jwt = require('./jwt');
 const port = 3000; // API 서버 포트
 app.use(cors());
 app.use(express.json()); // JSON 파싱 미들웨어 추가
@@ -43,14 +44,16 @@ app.post('/api/signin', (req, res) => {
     const query = 'SELECT * FROM HM.users WHERE id = ? AND pw = ?';
     db.query(query, [id, pw], (err, result) => {
         if (err) {
-            console.log('여기서에러?')
+            console.log('로그인오류')
             return res.status(500).json({ message: '아이디나 비밀번호가 잘못됨' });
         }
-        console.log(result);
         if (result.length > 0) {
             const user = result[0];
+            // jwt 토큰 생성
+            const token = jwt.createToken({ id: user.id, role: 'user' });
             res.status(200).json({
                 message: '로그인 성공',
+                token,
                 user: {
                     id: user.id,
                     name: user.name,
@@ -64,6 +67,28 @@ app.post('/api/signin', (req, res) => {
         }
     })
 })
+// 인증 미들웨어
+const check = (req, res, next) => {
+    const authHeader = req.headers['authorization'];
+    const token = authHeader && authHeader.split(' ')[1];
+    if (!token) {
+        return res.status(401).json({ message: '토큰이 필요해'})
+    }
+
+    try {
+        const user = jwt.verifyToken(token);
+        req.user = user;
+        next()
+    } catch (error) {
+        return res.status(401).json({ message: '유효하지 않은 토큰' });
+    }
+}
+
+// 보호된 API
+app.get('/api/protected', check, (req, res) => {
+    res.status(200).json({ message: '보호된 데이터입니다.', user: req.user });
+});
+
 
 // 테이블 데이터 조회하는 api
 app.get('/api/find', (req, res) => {

@@ -15,7 +15,7 @@ module.exports = {
       'error',
       {
         singleQuote: true,
-        semi: false,
+        semi: true,
         useTabs: false,
         tabWidth: 2,
         endOfLine: 'auto',
@@ -27,4 +27,4 @@ module.exports = {
     ],
     'no-console': process.env.NODE_ENV === 'production' ? 'error' : 'off',
   },
-}
+};

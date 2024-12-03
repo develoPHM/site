@@ -37,8 +37,12 @@ export default {
           pw: password.value,
         });
         console.log(response);
-        alert('로그인 성공');
-        router.push('/home');
+        if (response.data.token) {
+          const { token } = response.data;
+          localStorage.setItem('token', token); // jwt
+          alert('로그인 성공');
+          await router.push('/home');
+        }
       } catch (err) {
         console.log(err);
       }
