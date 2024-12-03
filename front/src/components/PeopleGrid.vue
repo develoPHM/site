@@ -98,7 +98,7 @@ export default {
       return store.state.people
     })
 
-    // input 초기화
+    // input 초기화.
     const clearInput = () => {
       inputId.value = ''
       inputName.value = ''
